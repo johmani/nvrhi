@@ -625,6 +625,8 @@ namespace nvrhi::d3d12
             return true;
         case Feature::HeapDirectlyIndexed:
             return m_HeapDirectlyIndexedEnabled;
+        case Feature::SamplerFeedback:
+             return m_SamplerFeedbackSupported;
         default:
             return false;
         }
