@@ -5,11 +5,11 @@ module;
 #include "nvrhi/nvrhiHLSL.h"
 #include "nvrhi/common/resourcebindingmap.h"
 
-#ifdef NVRHI_HAS_D2D11
+#ifdef NVRHI_HAS_D3D11
 #include "nvrhi/d3d11.h"
 #endif
 
-#ifdef NVRHI_HAS_D2D12
+#ifdef NVRHI_HAS_D3D12
 #include "nvrhi/d3d12.h"
 #endif
 
@@ -275,7 +275,7 @@ export namespace nvrhi {
 	namespace ObjectTypes {
 
 		using ObjectTypes::SharedHandle;
-#ifdef NVRHI_HAS_D2D11
+#ifdef NVRHI_HAS_D3D11
 		using ObjectTypes::D3D11_Device;
 		using ObjectTypes::D3D11_DeviceContext;
 		using ObjectTypes::D3D11_Resource;
@@ -285,7 +285,7 @@ export namespace nvrhi {
 		using ObjectTypes::D3D11_ShaderResourceView;
 		using ObjectTypes::D3D11_UnorderedAccessView;
 #endif // NVRHI_HAS_D2D11
-#ifdef NVRHI_HAS_D2D12
+#ifdef NVRHI_HAS_D3D12
 		using ObjectTypes::D3D12_Device;
 		using ObjectTypes::D3D12_CommandQueue;
 		using ObjectTypes::D3D12_GraphicsCommandList;
@@ -357,7 +357,7 @@ export namespace nvrhi {
 	}
 
 	// d3d11.h
-#ifdef NVRHI_HAS_D2D11
+#ifdef NVRHI_HAS_D3D11
 	namespace ObjectTypes {
 
 		using ObjectTypes::Nvrhi_D3D11_Device;
@@ -373,7 +373,7 @@ export namespace nvrhi {
 #endif // NVRHI_HAS_D2D11
 
 	// d2d12.h
-#ifdef NVRHI_HAS_D2D12
+#ifdef NVRHI_HAS_D3D12
 	namespace ObjectTypes {
 
 		using ObjectTypes::Nvrhi_D3D12_Device;
