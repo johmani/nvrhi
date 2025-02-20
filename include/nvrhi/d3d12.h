@@ -34,8 +34,8 @@ namespace nvrhi
 {
     namespace ObjectTypes
     {
-        constexpr ObjectType Nvrhi_D3D12_Device         = 0x00020101;
-        constexpr ObjectType Nvrhi_D3D12_CommandList    = 0x00020102;
+        inline constexpr ObjectType Nvrhi_D3D12_Device         = 0x00020101;
+        inline constexpr ObjectType Nvrhi_D3D12_CommandList    = 0x00020102;
     };
 }
 

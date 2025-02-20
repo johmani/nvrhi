@@ -29,7 +29,7 @@ namespace nvrhi
 {
     namespace ObjectTypes
     {
-        constexpr ObjectType Nvrhi_VK_Device = 0x00030101;
+        inline constexpr ObjectType Nvrhi_VK_Device = 0x00030101;
     };
 }
 

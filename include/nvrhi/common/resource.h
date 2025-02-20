@@ -39,50 +39,50 @@ namespace nvrhi
 
     namespace ObjectTypes
     {
-        constexpr ObjectType SharedHandle                           = 0x00000001;
+        inline constexpr ObjectType SharedHandle                           = 0x00000001;
 
-        constexpr ObjectType D3D11_Device                           = 0x00010001;
-        constexpr ObjectType D3D11_DeviceContext                    = 0x00010002;
-        constexpr ObjectType D3D11_Resource                         = 0x00010003;
-        constexpr ObjectType D3D11_Buffer                           = 0x00010004;
-        constexpr ObjectType D3D11_RenderTargetView                 = 0x00010005;
-        constexpr ObjectType D3D11_DepthStencilView                 = 0x00010006;
-        constexpr ObjectType D3D11_ShaderResourceView               = 0x00010007;
-        constexpr ObjectType D3D11_UnorderedAccessView              = 0x00010008;
+        inline constexpr ObjectType D3D11_Device                           = 0x00010001;
+        inline constexpr ObjectType D3D11_DeviceContext                    = 0x00010002;
+        inline constexpr ObjectType D3D11_Resource                         = 0x00010003;
+        inline constexpr ObjectType D3D11_Buffer                           = 0x00010004;
+        inline constexpr ObjectType D3D11_RenderTargetView                 = 0x00010005;
+        inline constexpr ObjectType D3D11_DepthStencilView                 = 0x00010006;
+        inline constexpr ObjectType D3D11_ShaderResourceView               = 0x00010007;
+        inline constexpr ObjectType D3D11_UnorderedAccessView              = 0x00010008;
 
-        constexpr ObjectType D3D12_Device                           = 0x00020001;
-        constexpr ObjectType D3D12_CommandQueue                     = 0x00020002;
-        constexpr ObjectType D3D12_GraphicsCommandList              = 0x00020003;
-        constexpr ObjectType D3D12_Resource                         = 0x00020004;
-        constexpr ObjectType D3D12_RenderTargetViewDescriptor       = 0x00020005;
-        constexpr ObjectType D3D12_DepthStencilViewDescriptor       = 0x00020006;
-        constexpr ObjectType D3D12_ShaderResourceViewGpuDescripror  = 0x00020007;
-        constexpr ObjectType D3D12_UnorderedAccessViewGpuDescripror = 0x00020008;
-        constexpr ObjectType D3D12_RootSignature                    = 0x00020009;
-        constexpr ObjectType D3D12_PipelineState                    = 0x0002000a;
-        constexpr ObjectType D3D12_CommandAllocator                 = 0x0002000b;
+        inline constexpr ObjectType D3D12_Device                           = 0x00020001;
+        inline constexpr ObjectType D3D12_CommandQueue                     = 0x00020002;
+        inline constexpr ObjectType D3D12_GraphicsCommandList              = 0x00020003;
+        inline constexpr ObjectType D3D12_Resource                         = 0x00020004;
+        inline constexpr ObjectType D3D12_RenderTargetViewDescriptor       = 0x00020005;
+        inline constexpr ObjectType D3D12_DepthStencilViewDescriptor       = 0x00020006;
+        inline constexpr ObjectType D3D12_ShaderResourceViewGpuDescripror  = 0x00020007;
+        inline constexpr ObjectType D3D12_UnorderedAccessViewGpuDescripror = 0x00020008;
+        inline constexpr ObjectType D3D12_RootSignature                    = 0x00020009;
+        inline constexpr ObjectType D3D12_PipelineState                    = 0x0002000a;
+        inline constexpr ObjectType D3D12_CommandAllocator                 = 0x0002000b;
 
-        constexpr ObjectType VK_Device                              = 0x00030001;
-        constexpr ObjectType VK_PhysicalDevice                      = 0x00030002;
-        constexpr ObjectType VK_Instance                            = 0x00030003;
-        constexpr ObjectType VK_Queue                               = 0x00030004;
-        constexpr ObjectType VK_CommandBuffer                       = 0x00030005;
-        constexpr ObjectType VK_DeviceMemory                        = 0x00030006;
-        constexpr ObjectType VK_Buffer                              = 0x00030007;
-        constexpr ObjectType VK_Image                               = 0x00030008;
-        constexpr ObjectType VK_ImageView                           = 0x00030009;
-        constexpr ObjectType VK_AccelerationStructureKHR            = 0x0003000a;
-        constexpr ObjectType VK_Sampler                             = 0x0003000b;
-        constexpr ObjectType VK_ShaderModule                        = 0x0003000c;
-        constexpr ObjectType VK_RenderPass                          = 0x0003000d;
-        constexpr ObjectType VK_Framebuffer                         = 0x0003000e;
-        constexpr ObjectType VK_DescriptorPool                      = 0x0003000f;
-        constexpr ObjectType VK_DescriptorSetLayout                 = 0x00030010;
-        constexpr ObjectType VK_DescriptorSet                       = 0x00030011;
-        constexpr ObjectType VK_PipelineLayout                      = 0x00030012;
-        constexpr ObjectType VK_Pipeline                            = 0x00030013;
-        constexpr ObjectType VK_Micromap                            = 0x00030014;
-        constexpr ObjectType VK_ImageCreateInfo                     = 0x00030015;
+        inline constexpr ObjectType VK_Device                              = 0x00030001;
+        inline constexpr ObjectType VK_PhysicalDevice                      = 0x00030002;
+        inline constexpr ObjectType VK_Instance                            = 0x00030003;
+        inline constexpr ObjectType VK_Queue                               = 0x00030004;
+        inline constexpr ObjectType VK_CommandBuffer                       = 0x00030005;
+        inline constexpr ObjectType VK_DeviceMemory                        = 0x00030006;
+        inline constexpr ObjectType VK_Buffer                              = 0x00030007;
+        inline constexpr ObjectType VK_Image                               = 0x00030008;
+        inline constexpr ObjectType VK_ImageView                           = 0x00030009;
+        inline constexpr ObjectType VK_AccelerationStructureKHR            = 0x0003000a;
+        inline constexpr ObjectType VK_Sampler                             = 0x0003000b;
+        inline constexpr ObjectType VK_ShaderModule                        = 0x0003000c;
+        inline constexpr ObjectType VK_RenderPass                          = 0x0003000d;
+        inline constexpr ObjectType VK_Framebuffer                         = 0x0003000e;
+        inline constexpr ObjectType VK_DescriptorPool                      = 0x0003000f;
+        inline constexpr ObjectType VK_DescriptorSetLayout                 = 0x00030010;
+        inline constexpr ObjectType VK_DescriptorSet                       = 0x00030011;
+        inline constexpr ObjectType VK_PipelineLayout                      = 0x00030012;
+        inline constexpr ObjectType VK_Pipeline                            = 0x00030013;
+        inline constexpr ObjectType VK_Micromap                            = 0x00030014;
+        inline constexpr ObjectType VK_ImageCreateInfo                     = 0x00030015;
     };
 
     struct Object

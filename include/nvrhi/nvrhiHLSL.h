@@ -57,10 +57,10 @@ namespace nvrhi
 
         namespace cluster
         {
-            static const uint32_t kClasByteAlignment = 128;
-            static const uint32_t kClasMaxTriangles = 256; // Defined by spec
-            static const uint32_t kClasMaxVertices = 256; // Defined by spec
-            static const uint32_t kMaxGeometryIndex = 16777215; // Defined by spec
+            inline constexpr uint32_t kClasByteAlignment = 128;
+            inline constexpr uint32_t kClasMaxTriangles = 256; // Defined by spec
+            inline constexpr uint32_t kClasMaxVertices = 256; // Defined by spec
+            inline constexpr uint32_t kMaxGeometryIndex = 16777215; // Defined by spec
 
             // Clone of NVAPI_D3D12_RAYTRACING_ACCELERATION_STRUCTURE_MULTI_INDIRECT_TRIANGLE_CLUSTER_ARGS
             struct IndirectTriangleClasArgs

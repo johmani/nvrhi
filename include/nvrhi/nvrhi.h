@@ -64,21 +64,21 @@ namespace nvrhi
 {
     // Version of the public API provided by NVRHI.
     // Increment this when any changes to the API are made.
-    static constexpr uint32_t c_HeaderVersion = 14;
+    inline constexpr uint32_t c_HeaderVersion = 14;
 
     // Verifies that the version of the implementation matches the version of the header.
     // Returns true if they match. Use this when initializing apps using NVRHI as a shared library.
     NVRHI_API bool verifyHeaderVersion(uint32_t version = c_HeaderVersion);
 
-    static constexpr uint32_t c_MaxRenderTargets = 8;
-    static constexpr uint32_t c_MaxViewports = 16;
-    static constexpr uint32_t c_MaxVertexAttributes = 16;
-    static constexpr uint32_t c_MaxBindingLayouts = 5;
-    static constexpr uint32_t c_MaxBindingsPerLayout = 128;
-    static constexpr uint32_t c_MaxVolatileConstantBuffersPerLayout = 6;
-    static constexpr uint32_t c_MaxVolatileConstantBuffers = 32;
-    static constexpr uint32_t c_MaxPushConstantSize = 128; // D3D12: root signature is 256 bytes max., Vulkan: 128 bytes of push constants guaranteed
-    static constexpr uint32_t c_ConstantBufferOffsetSizeAlignment = 256; // Partially bound constant buffers must have offsets aligned to this and sizes multiple of this
+    inline constexpr uint32_t c_MaxRenderTargets = 8;
+    inline constexpr uint32_t c_MaxViewports = 16;
+    inline constexpr uint32_t c_MaxVertexAttributes = 16;
+    inline constexpr uint32_t c_MaxBindingLayouts = 5;
+    inline constexpr uint32_t c_MaxBindingsPerLayout = 128;
+    inline constexpr uint32_t c_MaxVolatileConstantBuffersPerLayout = 6;
+    inline constexpr uint32_t c_MaxVolatileConstantBuffers = 32;
+    inline constexpr uint32_t c_MaxPushConstantSize = 128; // D3D12: root signature is 256 bytes max., Vulkan: 128 bytes of push constants guaranteed
+    inline constexpr uint32_t c_ConstantBufferOffsetSizeAlignment = 256; // Partially bound constant buffers must have offsets aligned to this and sizes multiple of this
 
     //////////////////////////////////////////////////////////////////////////
     // Basic Types
@@ -494,7 +494,7 @@ namespace nvrhi
 
         TextureSubresourceSet() = default;
 
-        TextureSubresourceSet(MipLevel _baseMipLevel, MipLevel _numMipLevels, ArraySlice _baseArraySlice, ArraySlice _numArraySlices)
+        constexpr TextureSubresourceSet(MipLevel _baseMipLevel, MipLevel _numMipLevels, ArraySlice _baseArraySlice, ArraySlice _numArraySlices)
             : baseMipLevel(_baseMipLevel)
             , numMipLevels(_numMipLevels)
             , baseArraySlice(_baseArraySlice)
@@ -524,7 +524,7 @@ namespace nvrhi
         // see the bottom of this file for a specialization of std::hash<TextureSubresourceSet>
     };
 
-    static const TextureSubresourceSet AllSubresources = TextureSubresourceSet(0, TextureSubresourceSet::AllMipLevels, 0, TextureSubresourceSet::AllArraySlices);
+    inline constexpr TextureSubresourceSet AllSubresources = TextureSubresourceSet(0, TextureSubresourceSet::AllMipLevels, 0, TextureSubresourceSet::AllArraySlices);
 
     class ITexture : public IResource
     {
@@ -718,7 +718,7 @@ namespace nvrhi
         
         BufferRange() = default;
 
-        BufferRange(uint64_t _byteOffset, uint64_t _byteSize)
+        constexpr BufferRange(uint64_t _byteOffset, uint64_t _byteSize)
             : byteOffset(_byteOffset)
             , byteSize(_byteSize)
         { }
@@ -731,7 +731,7 @@ namespace nvrhi
         constexpr BufferRange& setByteSize(uint64_t value) { byteSize = value; return *this; }
     };
 
-    static const BufferRange EntireBuffer = BufferRange(0, ~0ull);
+    inline constexpr const BufferRange EntireBuffer = BufferRange(0, ~0ull);
 
     class IBuffer : public IResource
     {

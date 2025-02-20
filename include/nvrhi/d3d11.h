@@ -32,7 +32,7 @@
 
 namespace nvrhi::ObjectTypes
 {
-    constexpr ObjectType Nvrhi_D3D11_Device = 0x00010101;
+    inline constexpr ObjectType Nvrhi_D3D11_Device = 0x00010101;
 };
 
 namespace nvrhi::d3d11
