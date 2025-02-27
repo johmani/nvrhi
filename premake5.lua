@@ -11,6 +11,7 @@ project "nvrhi"
 	{
 		"include/**.h",
 
+		"include/nvrhi/*.cppm",
 		"src/validation/**.h",
 		"src/validation/**.cpp",
 		"src/common/**.h",
@@ -28,6 +29,8 @@ project "nvrhi"
 		"rtxmu/src/VulkanSuballocator.cpp",
 		"rtxmu/src/Logger.cpp",
 		"rtxmu/src/VkAccelStructManager.cpp",
+
+		"*.lua",
 	}
 
 	includedirs
@@ -46,6 +49,10 @@ project "nvrhi"
 	filter "system:linux"
 		pic "On"
 		systemversion "latest"
+		defines
+		{
+			"NVRHI_HAS_VULKAN"
+		}
 
 	filter "system:windows"
 		systemversion "latest"
@@ -79,7 +86,10 @@ project "nvrhi"
 		defines 
 		{
 			"VK_USE_PLATFORM_WIN32_KHR",
-			"NOMINMAX"
+			"NOMINMAX",
+			"NVRHI_HAS_D3D11",
+			"NVRHI_HAS_D3D12",
+			"NVRHI_HAS_VULKAN",
 		}
 	
 	filter "configurations:Debug"
