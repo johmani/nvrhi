@@ -1,4 +1,5 @@
 project "nvrhi"
+	location (projectLocation)
 	kind "SharedLib"
 	language "C++"
 	cppdialect "C++latest"
