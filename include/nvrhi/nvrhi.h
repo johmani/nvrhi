@@ -1416,7 +1416,7 @@ namespace nvrhi
 
         typedef float AffineTransform[12];
 
-        constexpr AffineTransform c_IdentityTransform = {
+        inline constexpr AffineTransform c_IdentityTransform = {
         //  +----+----+---------  rotation and scaling
         //  v    v    v
             1.f, 0.f, 0.f, 0.f,

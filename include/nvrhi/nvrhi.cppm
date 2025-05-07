@@ -176,6 +176,8 @@ export namespace nvrhi {
 
 	namespace rt {
 
+		using rt::c_IdentityTransform;
+
 		using rt::OpacityMicromapFormat;
 		using rt::OpacityMicromapBuildFlags;
 		using rt::OpacityMicromapUsageCount;
