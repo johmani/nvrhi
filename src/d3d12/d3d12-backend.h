@@ -94,6 +94,7 @@ namespace nvrhi::d3d12
     typedef uint32_t RootParameterIndex;
     typedef uint32_t OptionalResourceState; // D3D12_RESOURCE_STATES + unknown value
 
+    constexpr RootParameterIndex c_InvalidRootParameterIndex = ~0u; // Used to skip mutable descriptor set
     constexpr DescriptorIndex c_InvalidDescriptorIndex = ~0u;
     constexpr OptionalResourceState c_ResourceStateUnknown = ~0u;
     
@@ -221,9 +222,9 @@ namespace nvrhi::d3d12
         RefCountPtr<IShaderLibrary> library;
 
         ShaderLibraryEntry(IShaderLibrary* pLibrary, const char* entryName, ShaderType shaderType)
-            : desc(shaderType)
-            , library(pLibrary)
+            : library(pLibrary)
         {
+            desc.shaderType = shaderType;
             desc.entryName = entryName;
         }
 
@@ -381,6 +382,7 @@ namespace nvrhi::d3d12
         const TextureDesc textureDesc; // used with state tracking
         RefCountPtr<ID3D12Resource> resource;
         TextureHandle pairedTexture;
+        DescriptorIndex clearDescriptorIndex = c_InvalidDescriptorIndex;
 
         SamplerFeedbackTexture(const Context& context, DeviceResources& resources, SamplerFeedbackTextureDesc desc, TextureDesc textureDesc, ITexture* pairedTexture)
             : desc(std::move(desc))
@@ -974,7 +976,7 @@ namespace nvrhi::d3d12
         void buildTopLevelAccelStruct(rt::IAccelStruct* as, const rt::InstanceDesc* pInstances, size_t numInstances, rt::AccelStructBuildFlags buildFlags) override;
         void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
             rt::AccelStructBuildFlags buildFlags = rt::AccelStructBuildFlags::None) override;
-        void executeMultiIndirectClusterOperation(const rt::cluster::OperationDesc& desc);
+        void executeMultiIndirectClusterOperation(const rt::cluster::OperationDesc& desc) override;
 
         void beginTimerQuery(ITimerQuery* query) override;
         void endTimerQuery(ITimerQuery* query) override;
@@ -1204,6 +1206,9 @@ namespace nvrhi::d3d12
         bool GetAccelStructPreBuildInfo(D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO& outPreBuildInfo, const rt::AccelStructDesc& desc) const;
 
         bool GetNvapiIsInitialized() const { return m_NvapiIsInitialized; }
+        bool GetOpacityMicromapSupported() const { return m_OpacityMicromapSupported; }
+        bool GetLinearSweptSpheresSupported( ) const { return m_LinearSweptSpheresSupported; }
+
     private:
         Context m_Context;
         DeviceResources m_Resources;
@@ -1217,6 +1222,7 @@ namespace nvrhi::d3d12
         
         bool m_NvapiIsInitialized = false;
         bool m_SinglePassStereoSupported = false;
+        bool m_HlslExtensionsSupported = false;
         bool m_FastGeometryShaderSupported = false;
         bool m_RayTracingSupported = false;
         bool m_TraceRayInlineSupported = false;
@@ -1234,6 +1240,7 @@ namespace nvrhi::d3d12
 
 
         D3D12_FEATURE_DATA_D3D12_OPTIONS  m_Options = {};
+        D3D12_FEATURE_DATA_D3D12_OPTIONS1 m_Options1 = {};
         D3D12_FEATURE_DATA_D3D12_OPTIONS5 m_Options5 = {};
         D3D12_FEATURE_DATA_D3D12_OPTIONS6 m_Options6 = {};
         D3D12_FEATURE_DATA_D3D12_OPTIONS7 m_Options7 = {};

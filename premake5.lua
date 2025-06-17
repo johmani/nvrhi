@@ -40,7 +40,6 @@ project "nvrhi"
 
         "include",
         "rtxmu/include/",
-        "%{IncludeDir.Vulkan_Headers}",
     }
 
     defines {
@@ -121,6 +120,11 @@ project "nvrhi"
                 "rtxmu/include/rtxmu/VulkanSuballocator.h",
                 "rtxmu/src/VkAccelStructManager.cpp",
                 "rtxmu/src/VulkanSuballocator.cpp",
+            }
+
+            includedirs {
+              
+                "%{IncludeDir.Vulkan_Headers}",
             }
         end
 

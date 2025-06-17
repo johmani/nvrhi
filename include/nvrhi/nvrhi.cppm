@@ -26,7 +26,7 @@ export namespace nvrhi {
 	using nvrhi::c_MaxViewports;
 	using nvrhi::c_MaxVertexAttributes;
 	using nvrhi::c_MaxBindingLayouts;
-	using nvrhi::c_MaxBindingsPerLayout;
+	using nvrhi::c_MaxBindlessRegisterSpaces;
 	using nvrhi::c_MaxVolatileConstantBuffersPerLayout;
 	using nvrhi::c_MaxVolatileConstantBuffers;
 	using nvrhi::c_MaxPushConstantSize;
@@ -110,14 +110,12 @@ export namespace nvrhi {
 	using nvrhi::FramebufferHandle;
 	using nvrhi::ResourceType;
 	using nvrhi::BindingLayoutItem;
-	using nvrhi::BindingLayoutItemArray;
 	using nvrhi::VulkanBindingOffsets;
 	using nvrhi::BindingLayoutDesc;
 	using nvrhi::BindlessLayoutDesc;
 	using nvrhi::IBindingLayout;
 	using nvrhi::BindingLayoutHandle;
 	using nvrhi::BindingSetItem;
-	using nvrhi::BindingSetItemArray;
 	using nvrhi::BindingSetDesc;
 	using nvrhi::IBindingSet;
 	using nvrhi::BindingSetHandle;
@@ -151,11 +149,13 @@ export namespace nvrhi {
 	using nvrhi::DrawIndirectArguments;
 	using nvrhi::DrawIndexedIndirectArguments;
 	using nvrhi::ComputeState;
+	using nvrhi::DispatchIndirectArguments;
 	using nvrhi::MeshletState;
 	using nvrhi::Feature;
 	using nvrhi::MessageSeverity;
 	using nvrhi::CommandQueue;
 	using nvrhi::VariableRateShadingFeatureInfo;
+	using nvrhi::WaveLaneCountMinMaxFeatureInfo;
 	using nvrhi::IMessageCallback;
 	using nvrhi::CommandListParameters;
 	using nvrhi::ICommandList;
