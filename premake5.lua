@@ -13,7 +13,6 @@ project "nvrhi"
         "src/validation/**.h",
         "src/common/**.h",
 
-        "include/nvrhi/*.cppm",
         "src/validation/**.cpp",
         "src/common/**.cpp",
 
