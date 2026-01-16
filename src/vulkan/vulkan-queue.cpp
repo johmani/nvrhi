@@ -163,10 +163,10 @@ namespace nvrhi::vulkan
             .setCommandBufferCount(uint32_t(numCmd))
             .setPCommandBuffers(commandBuffers.data())
             .setWaitSemaphoreCount(uint32_t(m_WaitSemaphores.size()))
-            .setPWaitSemaphores(m_WaitSemaphores.data())
+            .setPWaitSemaphores(m_WaitSemaphores.empty() ? nullptr : m_WaitSemaphores.data())
             .setPWaitDstStageMask(waitStageArray.data())
             .setSignalSemaphoreCount(uint32_t(m_SignalSemaphores.size()))
-            .setPSignalSemaphores(m_SignalSemaphores.data());
+            .setPSignalSemaphores(m_SignalSemaphores.empty() ? nullptr : m_SignalSemaphores.data());
 
         try {
             m_Queue.submit(submitInfo);
@@ -201,7 +201,6 @@ namespace nvrhi::vulkan
 
         // Mip tail info, required for resource offset
         vk::DeviceSize imageMipTailOffset = 0;
-        vk::DeviceSize imageMipTailStride = 1;
 
         std::vector<vk::SparseImageFormatProperties> formatProperties = m_Context.physicalDevice.getSparseImageFormatProperties(imageInfo.format, imageInfo.imageType, imageInfo.samples, imageInfo.usage, imageInfo.tiling);
 		std::vector<vk::SparseImageMemoryRequirements> memoryRequirements = m_Context.device.getImageSparseMemoryRequirements(texture->image);
@@ -216,7 +215,6 @@ namespace nvrhi::vulkan
         if (!memoryRequirements.empty())
         {
 			imageMipTailOffset = memoryRequirements[0].imageMipTailOffset;
-			imageMipTailStride = memoryRequirements[0].imageMipTailStride;
         }
 
         for (size_t i = 0; i < numTileMappings; i++)

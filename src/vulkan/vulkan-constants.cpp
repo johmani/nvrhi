@@ -51,7 +51,7 @@ namespace nvrhi::vulkan
         { Format::R16_UNORM,         VK_FORMAT_R16_UNORM                },
         { Format::R16_SNORM,         VK_FORMAT_R16_SNORM                },
         { Format::R16_FLOAT,         VK_FORMAT_R16_SFLOAT               },
-        { Format::BGRA4_UNORM,       VK_FORMAT_B4G4R4A4_UNORM_PACK16    },
+        { Format::BGRA4_UNORM,       VK_FORMAT_A4R4G4B4_UNORM_PACK16    }, // this format matches the bit layout of DXGI_FORMAT_B4G4R4A4_UNORM
         { Format::B5G6R5_UNORM,      VK_FORMAT_B5G6R5_UNORM_PACK16      },
         { Format::B5G5R5A1_UNORM,    VK_FORMAT_B5G5R5A1_UNORM_PACK16    },
         { Format::RGBA8_UINT,        VK_FORMAT_R8G8B8A8_UINT            },
@@ -59,8 +59,10 @@ namespace nvrhi::vulkan
         { Format::RGBA8_UNORM,       VK_FORMAT_R8G8B8A8_UNORM           },
         { Format::RGBA8_SNORM,       VK_FORMAT_R8G8B8A8_SNORM           },
         { Format::BGRA8_UNORM,       VK_FORMAT_B8G8R8A8_UNORM           },
+        { Format::BGRX8_UNORM,       VK_FORMAT_UNDEFINED                }, // Not supported on Vulkan
         { Format::SRGBA8_UNORM,      VK_FORMAT_R8G8B8A8_SRGB            },
         { Format::SBGRA8_UNORM,      VK_FORMAT_B8G8R8A8_SRGB            },
+        { Format::SBGRX8_UNORM,      VK_FORMAT_UNDEFINED                }, // Not supported on Vulkan
         { Format::R10G10B10A2_UNORM, VK_FORMAT_A2B10G10R10_UNORM_PACK32 },
         { Format::R11G11B10_FLOAT,   VK_FORMAT_B10G11R11_UFLOAT_PACK32  },
         { Format::RG16_UINT,         VK_FORMAT_R16G16_UINT              },
@@ -207,35 +209,7 @@ namespace nvrhi::vulkan
 #endif
     }
 
-    struct ResourceStateMappingInternal
-    {
-        ResourceStates nvrhiState;
-        vk::PipelineStageFlags2 stageFlags;
-        vk::AccessFlags2 accessMask;
-        vk::ImageLayout imageLayout;
-
-        ResourceStateMapping AsResourceStateMapping() const 
-        {
-            // It's safe to cast vk::AccessFlags2 -> vk::AccessFlags and vk::PipelineStageFlags2 -> vk::PipelineStageFlags (as long as the enum exist in both versions!),
-            // synchronization2 spec says: "The new flags are identical to the old values within the 32-bit range, with new stages and bits beyond that."
-            // The below stages are exclustive to synchronization2
-            assert((stageFlags & vk::PipelineStageFlagBits2::eMicromapBuildEXT) != vk::PipelineStageFlagBits2::eMicromapBuildEXT);
-            assert((accessMask & vk::AccessFlagBits2::eMicromapWriteEXT) != vk::AccessFlagBits2::eMicromapWriteEXT);
-            return
-                ResourceStateMapping(nvrhiState,
-                    reinterpret_cast<const vk::PipelineStageFlags&>(stageFlags),
-                    reinterpret_cast<const vk::AccessFlags&>(accessMask),
-                    imageLayout
-                );
-        }
-
-        ResourceStateMapping2 AsResourceStateMapping2() const
-        {
-            return ResourceStateMapping2(nvrhiState, stageFlags, accessMask, imageLayout);
-        }
-    };
-
-    static const ResourceStateMappingInternal g_ResourceStateMap[] =
+    static const ResourceStateMapping g_ResourceStateMap[] =
     {
         { ResourceStates::Common,
             vk::PipelineStageFlagBits2::eTopOfPipe,
@@ -339,9 +313,9 @@ namespace nvrhi::vulkan
             vk::ImageLayout::eUndefined },
     };
 
-    ResourceStateMappingInternal convertResourceStateInternal(ResourceStates state)
+    ResourceStateMapping convertResourceState(ResourceStates state, bool isImage)
     {
-        ResourceStateMappingInternal result = {};
+        ResourceStateMapping result = {};
 
         constexpr uint32_t numStateBits = sizeof(g_ResourceStateMap) / sizeof(g_ResourceStateMap[0]);
 
@@ -354,16 +328,26 @@ namespace nvrhi::vulkan
 
             if (stateTmp & bit)
             {
-                const ResourceStateMappingInternal& mapping = g_ResourceStateMap[bitIndex];
+                const ResourceStateMapping& mapping = g_ResourceStateMap[bitIndex];
 
                 assert(uint32_t(mapping.nvrhiState) == bit);
-                assert(result.imageLayout == vk::ImageLayout::eUndefined || mapping.imageLayout == vk::ImageLayout::eUndefined || result.imageLayout == mapping.imageLayout);
+                if (isImage)
+                {
+                    // If we're converting the state for an image, make sure that the requested state bits
+                    // do not translate to different image layouts, which would be impossible to combine.
+                    // For buffers, the image layout doesn't matter.
+                    assert(result.imageLayout == vk::ImageLayout::eUndefined
+                        || mapping.imageLayout == vk::ImageLayout::eUndefined
+                        || result.imageLayout == mapping.imageLayout);
+                }
 
                 result.nvrhiState = ResourceStates(result.nvrhiState | mapping.nvrhiState);
                 result.accessMask |= mapping.accessMask;
                 result.stageFlags |= mapping.stageFlags;
-                if (mapping.imageLayout != vk::ImageLayout::eUndefined)
+                if (isImage && mapping.imageLayout != vk::ImageLayout::eUndefined)
+                {
                     result.imageLayout = mapping.imageLayout;
+                }
 
                 stateTmp &= ~bit;
             }
@@ -374,18 +358,6 @@ namespace nvrhi::vulkan
         assert(result.nvrhiState == state);
 
         return result;
-    }
-
-    ResourceStateMapping convertResourceState(ResourceStates state)
-    {
-        const ResourceStateMappingInternal mapping = convertResourceStateInternal(state);
-        return mapping.AsResourceStateMapping();
-    }
-
-    ResourceStateMapping2 convertResourceState2(ResourceStates state)
-    {
-        const ResourceStateMappingInternal mapping = convertResourceStateInternal(state);
-        return mapping.AsResourceStateMapping2();
     }
 
     const char* resultToString(VkResult result)
@@ -898,9 +870,9 @@ namespace nvrhi::vulkan
         case coopvec::DataType::SInt64:
             return vk::ComponentTypeKHR::eSint64;
         case coopvec::DataType::FloatE4M3:
-            return vk::ComponentTypeKHR::eFloatE4M3NV;
+            return vk::ComponentTypeKHR::eFloatE4M3;
         case coopvec::DataType::FloatE5M2:
-            return vk::ComponentTypeKHR::eFloatE5M2NV;
+            return vk::ComponentTypeKHR::eFloatE5M2;
         case coopvec::DataType::Float16:
             return vk::ComponentTypeKHR::eFloat16;
         case coopvec::DataType::BFloat16:
@@ -939,9 +911,9 @@ namespace nvrhi::vulkan
             return coopvec::DataType::UInt64;
         case vk::ComponentTypeKHR::eSint64:
             return coopvec::DataType::SInt64;
-        case vk::ComponentTypeKHR::eFloatE4M3NV:
+        case vk::ComponentTypeKHR::eFloatE4M3:
             return coopvec::DataType::FloatE4M3;
-        case vk::ComponentTypeKHR::eFloatE5M2NV:
+        case vk::ComponentTypeKHR::eFloatE5M2:
             return coopvec::DataType::FloatE5M2;
         case vk::ComponentTypeKHR::eFloat16:
             return coopvec::DataType::Float16;
