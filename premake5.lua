@@ -107,6 +107,11 @@ project "nvrhi"
                 "rtxmu/src/D3D12AccelStructManager.cpp",
                 "rtxmu/src/D3D12Suballocator.cpp",
             }
+
+            includedirs {
+              
+                "%{IncludeDir.DirectX_Headers}/directx",
+            }
         end
 
         if RHI.enableVulkan then
