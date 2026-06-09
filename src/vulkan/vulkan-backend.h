@@ -158,6 +158,7 @@ namespace nvrhi::vulkan
             bool NV_device_diagnostic_checkpoints = false;
             bool NV_device_diagnostics_config= false;
 #endif
+            bool EXT_depth_clip_enable = false;
         } extensions;
 
         vk::PhysicalDeviceProperties physicalDeviceProperties;
@@ -565,11 +566,18 @@ namespace nvrhi::vulkan
         VulkanAllocator& m_Allocator;
     };
     
-    struct StagingTextureRegion
+    struct PlacedSubresourceFootprint
     {
         // offset, size in bytes
-        off_t offset;
-        size_t size;
+        size_t offset;
+        size_t totalBytes;
+        uint32_t rowSizeInBytes;
+        uint32_t numRows;
+        Format format;
+        uint32_t width;
+        uint32_t height;
+        uint32_t depth;
+        uint32_t rowPitch;
     };
 
     class StagingTexture : public RefCounter<IStagingTexture>
@@ -578,21 +586,11 @@ namespace nvrhi::vulkan
         TextureDesc desc;
         // backing store for staging texture is a buffer
         RefCountPtr<Buffer> buffer;
-        // per-mip, per-slice regions
-        // offset = mipLevel * numDepthSlices + depthSlice
-        std::vector<StagingTextureRegion> sliceRegions;
+        // Per-mip, per-slice regions: index = mipLevel * arraySize + arraySlice
+        std::vector<PlacedSubresourceFootprint> placedFootprints;
 
-        size_t computeSliceSize(uint32_t mipLevel);
-        const StagingTextureRegion& getSliceRegion(uint32_t mipLevel, uint32_t arraySlice, uint32_t z);
-        void populateSliceRegions();
-
-        size_t getBufferSize()
-        {
-            assert(sliceRegions.size());
-            size_t size = sliceRegions.back().offset + sliceRegions.back().size;
-            assert(size > 0);
-            return size;
-        }
+        size_t computeCopyableFootprints();
+        const PlacedSubresourceFootprint* getCopyableFootprint(MipLevel mipLevel, ArraySlice arraySlice);
         
         const TextureDesc& getDesc() const override { return desc; }
     };
@@ -1160,6 +1158,8 @@ namespace nvrhi::vulkan
         bool queryFeatureSupport(Feature feature, void* pInfo = nullptr, size_t infoSize = 0) override;
         FormatSupport queryFormatSupport(Format format) override;
         coopvec::DeviceFeatures queryCoopVecFeatures() override;
+        coopvec::MatMulFormatSupport queryCoopVecMatMulFormatSupport(const coopvec::MatMulFormatCombo& combination) override;
+        coopvec::TrainingFormatSupport queryCoopVecTrainingFormatSupport(coopvec::DataType componentType) override;
         size_t getCoopVecMatrixSize(coopvec::DataType type, coopvec::MatrixLayout layout, int rows, int columns) override;
         Object getNativeQueue(ObjectType objectType, CommandQueue queue) override;
         IMessageCallback* getMessageCallback() override { return m_Context.messageCallback; }
@@ -1188,7 +1188,12 @@ namespace nvrhi::vulkan
 
         // array of submission queues
         std::array<std::unique_ptr<Queue>, uint32_t(CommandQueue::Count)> m_Queues;
-        
+
+        // Lazily populated on the first call to queryCoopVecMatMulFormatSupport or queryCoopVecFeatures.
+        mutable std::vector<vk::CooperativeVectorPropertiesNV> m_CoopVecMatMulProperties;
+        mutable bool m_CoopVecMatMulPropertiesPopulated = false;
+        void getCoopVecMatMulProperties() const;
+
         void *mapBuffer(IBuffer* b, CpuAccessMode flags, uint64_t offset, size_t size) const;
     };
 
@@ -1236,6 +1241,7 @@ namespace nvrhi::vulkan
         void drawIndexed(const DrawArguments& args) override;
         void drawIndirect(uint32_t offsetBytes, uint32_t drawCount) override;
         void drawIndexedIndirect(uint32_t offsetBytes, uint32_t drawCount) override;
+        void drawIndexedIndirectCount(uint32_t paramOffsetBytes, uint32_t countOffsetBytes, uint32_t maxDrawCount) override;
 
         void setComputeState(const ComputeState& state) override;
         void dispatch(uint32_t groupsX, uint32_t groupsY = 1, uint32_t groupsZ = 1) override;
@@ -1243,6 +1249,8 @@ namespace nvrhi::vulkan
 
         void setMeshletState(const MeshletState& state) override;
         void dispatchMesh(uint32_t groupsX, uint32_t groupsY = 1, uint32_t groupsZ = 1) override;
+        void dispatchMeshIndirect(uint32_t offsetBytes, uint32_t maxDrawCount) override;
+        void dispatchMeshIndirectCount(uint32_t paramOffsetBytes, uint32_t countOffsetBytes, uint32_t maxDrawCount) override;
 
         void setRayTracingState(const rt::State& state) override;
         void dispatchRays(const rt::DispatchRaysArguments& args) override;
@@ -1250,6 +1258,7 @@ namespace nvrhi::vulkan
         void buildOpacityMicromap(rt::IOpacityMicromap* omm, const rt::OpacityMicromapDesc& desc) override;
         void buildBottomLevelAccelStruct(rt::IAccelStruct* as, const rt::GeometryDesc* pGeometries, size_t numGeometries, rt::AccelStructBuildFlags buildFlags) override;
         void compactBottomLevelAccelStructs() override;
+        void copyRaytracingAccelerationStructure(rt::IAccelStruct* destination, rt::IAccelStruct* source) override;
         void buildTopLevelAccelStruct(rt::IAccelStruct* as, const rt::InstanceDesc* pInstances, size_t numInstances, rt::AccelStructBuildFlags buildFlags) override;
         void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
             rt::AccelStructBuildFlags buildFlags = rt::AccelStructBuildFlags::None) override;

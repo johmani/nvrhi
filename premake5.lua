@@ -1,3 +1,6 @@
+IncludeDir["Vulkan_Headers"]  = "%{HE}/ThirdParty/nvrhi/ThirdParty/Vulkan-Headers/include"
+IncludeDir["DirectX_Headers"] = "%{HE}/ThirdParty/nvrhi/ThirdParty/DirectX-Headers/include"
+
 project "nvrhi"
     kind "SharedLib"
     language "C++"

@@ -1,3 +1,9 @@
 [submodule "rtxmu"]
 	path = rtxmu
 	url = https://github.com/johmani/RTXMU.git
+[submodule "ThirdParty/Vulkan-Headers"]
+	path = ThirdParty/Vulkan-Headers
+	url = https://github.com/johmani/Vulkan-Headers.git
+[submodule "ThirdParty/DirectX-Headers"]
+	path = ThirdParty/DirectX-Headers
+	url = https://github.com/johmani/DirectX-Headers.git
