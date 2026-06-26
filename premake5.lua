@@ -6,10 +6,11 @@ project "nvrhi"
     language "C++"
     cppdialect "C++latest"
     staticruntime "off"
+    implibdir "%{cfg.objdir}"
     location (projectLocation)
     targetdir (binOutputDir)
     objdir (IntermediatesOutputDir)
-
+    
     files {
 
         "include/**.h",
