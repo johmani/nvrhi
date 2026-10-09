@@ -2,14 +2,18 @@ IncludeDir["Vulkan_Headers"]  = "%{HE}/ThirdParty/nvrhi/ThirdParty/Vulkan-Header
 IncludeDir["DirectX_Headers"] = "%{HE}/ThirdParty/nvrhi/ThirdParty/DirectX-Headers/include"
 
 project "nvrhi"
-    kind "SharedLib"
     language "C++"
     cppdialect "C++latest"
-    staticruntime "off"
     implibdir "%{cfg.objdir}"
-    location (projectLocation)
-    targetdir (binOutputDir)
     objdir (IntermediatesOutputDir)
+
+	ProjectKind("SharedLib")
+    filter "kind:SharedLib"
+        targetdir (binOutputDir)
+        defines { "NVRHI_SHARED_LIBRARY_BUILD" }
+    filter "kind:StaticLib"
+        targetdir (libOutputDir)
+    filter {}
     
     files {
 
@@ -48,7 +52,6 @@ project "nvrhi"
     defines {
 
         "NVRHI_WITH_RTXMU",
-        "NVRHI_SHARED_LIBRARY_BUILD"
     }
 
     filter "system:linux"
@@ -89,7 +92,6 @@ project "nvrhi"
         }
 
         if RHI.enableD3D11 then
-            links { "D3D11.lib" }
             defines { "NVRHI_HAS_D3D11" }
             files {
 
@@ -99,7 +101,6 @@ project "nvrhi"
         end
 
         if RHI.enableD3D12 then
-            links { "D3D12.lib" }
             defines { "NVRHI_HAS_D3D12" }
             files {
 
@@ -142,9 +143,8 @@ project "nvrhi"
 
     filter "configurations:Release"
         runtime "Release"
-        optimize "On"
+        symbols "On"
 
     filter "configurations:Dist"
         runtime "Release"
-        optimize "Speed"
         symbols "Off"
